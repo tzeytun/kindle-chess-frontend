@@ -225,3 +225,14 @@ function handleSquareClick(r: number, c: number, piece: string) {
   selectedSquare = null;
   renderBoard();
 }
+
+const refreshBtn = document.getElementById('refreshBtn') as HTMLButtonElement;
+
+refreshBtn.onclick = () => {
+    document.body.style.filter = "invert(1)";
+    
+    
+    setTimeout(() => {
+        document.body.style.filter = "invert(0)";
+    }, 300);
+};
