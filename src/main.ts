@@ -136,11 +136,19 @@ function toChessNotation(r: number, c: number): string {
 function renderBoard() {
   boardEl.innerHTML = '';
   const boardMatrix = parseFen(currentFen);
+  
+  const amIBlack = myColor === 'b';
 
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
+  // Dış döngü (Satırlar)
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      
+      const r = amIBlack ? 7 - i : i;
+      const c = amIBlack ? 7 - j : j;
+
       const square = document.createElement('div');
       const pieceKey = boardMatrix[r][c];
+      
       const isBlackSquare = (r + c) % 2 === 1;
       
       let classes = `relative flex justify-center items-center w-full h-full cursor-pointer border-4 box-border `;
@@ -148,7 +156,6 @@ function renderBoard() {
       if (isBlackSquare) classes += 'bg-gray-400 '; 
       else classes += 'bg-white ';
 
-      // Seçim Mantığı
       if (selectedSquare && selectedSquare.r === r && selectedSquare.c === c) {
         classes += 'border-black '; 
       } else {
@@ -157,7 +164,6 @@ function renderBoard() {
 
       square.className = classes;
 
-      // Taş Resmi
       if (pieceKey && PIECES[pieceKey]) {
         const img = document.createElement('img');
         img.src = PIECES[pieceKey];
@@ -166,6 +172,7 @@ function renderBoard() {
       }
       
       square.onclick = () => handleSquareClick(r, c, pieceKey);
+      
       boardEl.appendChild(square);
     }
   }
