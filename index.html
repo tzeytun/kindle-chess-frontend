@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kindle Chess</title>
+  </head>
+  <body class="flex flex-col items-center justify-start h-screen pt-4">
+    
+    <h1 class="text-2xl font-bold mb-2">Kindle Chess</h1>
+    <div id="status" class="text-lg mb-4 font-mono border-2 border-black p-2 w-11/12 text-center">
+      Sunucuya bağlanılıyor...
+    </div>
+
+    <div id="board" 
+     class="grid grid-cols-8 grid-rows-8 border-4 border-black mx-auto"
+     style="width: 90vw; height: 90vw; max-width: 600px; max-height: 600px;">
+  </div>
+
+    <div id="info" class="mt-4 text-sm text-center px-4">
+      Oyuncu ID: <span id="playerId" class="font-bold">...</span>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

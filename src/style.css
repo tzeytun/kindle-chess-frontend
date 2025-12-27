@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Kindle için seçim engelleme ve dokunma iyileştirmesi */
+body {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background-color: #ffffff;
+}
