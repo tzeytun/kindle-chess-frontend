@@ -78,8 +78,18 @@ socket.on('updateBoard', (data: any) => {
 });
 
 socket.on('error', (msg: string) => {
-  alert(msg); 
- 
+  const originalText = statusEl.innerText; 
+  
+  statusEl.innerText = `⚠️ ${msg}`; 
+  statusEl.className = "text-lg mb-4 font-bold border-2 border-black p-2 w-11/12 text-center bg-black text-white"; 
+  
+  
+  setTimeout(() => {
+    statusEl.innerText = originalText;
+    statusEl.className = "text-lg mb-4 font-mono border-2 border-black p-2 w-11/12 text-center bg-white text-black";
+  }, 2000);
+
+  // Seçimi kaldır
   selectedSquare = null;
   renderBoard();
 });
