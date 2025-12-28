@@ -116,41 +116,46 @@ socket.on('updateBoard', (data: any) => {
         if (timerInterval) clearInterval(timerInterval);
 
         const imWinner = data.winner === state.color;
-        let mainText = "";
-        let subText = "";
+        // --- YENİ EKLENEN KISIM: ALERT İLE BİLDİRİM ---
+        let alertMsg = "";
+        if (imWinner) alertMsg = "KAZANDIN! ";
+        else alertMsg = "KAYBETTİN... ";
 
-        if (imWinner) {
-            mainText = "KAZANDINIZ!";
-        } else {
-            mainText = "KAYBETTİNİZ...";
-        }
+        if (data.reason === 'resign') alertMsg += "(Rakip Terk Etti)";
+        else if (data.reason === 'timeout') alertMsg += "(Süre Bitti)";
+        else if (data.reason === 'checkmate') alertMsg += "(Şah Mat)";
+        
+        // Kindle kullanıcısı bunu kesin görür:
+        setTimeout(() => alert(alertMsg), 100); 
+        // ----------------------------------------------
 
-        if (data.reason === 'resign') subText = imWinner ? "(Rakip terk etti)" : "(Terk ettiniz)";
-        else if (data.reason === 'timeout') subText = "(Süre bitti)";
-        else if (data.reason === 'checkmate') subText = "(Şah Mat)";
-        else subText = "(Oyun Bitti)";
-
-        elements.status.innerHTML = `${mainText}<br><span class="text-sm font-normal">${subText}</span>`;
-        elements.status.className = "text-lg mb-2 font-bold bg-black text-white p-2 text-center border-2 border-black";
+        // Statü yazısını güncelle
+        elements.status.innerText = alertMsg;
+        elements.status.className = "text-xs font-bold bg-black text-white p-1 text-center truncate"; // Daha küçük font
         
         updateState({ isMyTurn: false });
 
-        
+        // Butonu "Menüye Dön" yap
         if(resignBtn) {
-            resignBtn.innerText = "Menüye Dön";
-            resignBtn.className = "flex-1 border-2 border-black py-2 font-bold text-sm bg-white text-black";
-            // onclick mantığı yukarıda tanımlı (innerText kontrolü ile)
+            resignBtn.innerText = "Menü 🏠"; // Kısa isim
+            resignBtn.className = "border-2 border-black px-3 py-1 font-bold text-xs bg-white text-black";
+            // Onclick olayını değiştiriyoruz
+             resignBtn.onclick = () => { 
+                socket.emit('backToMenu'); 
+                location.reload(); 
+            };
         }
         
     } else {
         // Oyun devam ediyorsa
-        elements.status.innerText = isMyTurn ? "Sıra SENDE" : "Rakip düşünüyor...";
-        elements.status.className = "text-lg mb-2 font-mono border-2 border-black p-2 text-center";
+        elements.status.innerText = isMyTurn ? "Sıra SENDE" : "Rakip Bekleniyor...";
+        elements.status.className = "text-xs font-mono font-bold truncate";
     }
 
     updateState({ selectedSquare: null });
     renderBoard();
 });
+
 
 // --- YARDIMCI FONKSİYONLAR ---
 
