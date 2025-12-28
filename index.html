@@ -6,6 +6,13 @@
     <title>Kindle Chess</title>
   </head>
   <body class="flex flex-col items-center justify-start h-screen pt-4 bg-white">
+
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        alert("HATA: " + message);
+      };
+    </script>
+    
     <h1 class="text-2xl font-bold mb-2">Kindle Chess</h1>
 
     <div id="lobbyScreen" class="w-full max-w-[600px] flex flex-col gap-4 p-4">

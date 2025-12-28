@@ -1,14 +1,32 @@
-import { v4 as uuidv4 } from 'uuid';
 import { elements } from './dom';
 import type { GameState } from './types';
 
-// 1. ID Yönetimi
-let myPlayerId = localStorage.getItem('kindle_chess_player_id');
-if (!myPlayerId) {
-    myPlayerId = uuidv4();
-    localStorage.setItem('kindle_chess_player_id', myPlayerId);
+function generateSimpleId() {
+    return 'player-' + Math.random().toString(36).substring(2, 9);
 }
-elements.playerIdDisplay.innerText = myPlayerId.substring(0, 8);
+
+// 1. ID Yönetimi (Hata korumalı)
+let myPlayerId = '';
+
+try {
+    myPlayerId = localStorage.getItem('kindle_chess_player_id') || '';
+} catch (e) {
+    console.error("LocalStorage hatası:", e);
+}
+
+if (!myPlayerId) {
+    myPlayerId = generateSimpleId();
+    try {
+        localStorage.setItem('kindle_chess_player_id', myPlayerId);
+    } catch (e) {
+        // Kindle'da gizli moddaysa veya izin yoksa kaydetmeyebilir, sorun yok.
+    }
+}
+
+// HTML'e yazdırma (Null check ekledik)
+if (elements.playerIdDisplay) {
+    elements.playerIdDisplay.innerText = myPlayerId;
+}
 
 export const getPlayerId = () => myPlayerId as string;
 
@@ -22,6 +40,7 @@ export const state: GameState = {
   lastMove: null
 };
 
+// State güncelleme yardımcısı
 export function updateState(updates: Partial<GameState>) {
   Object.assign(state, updates);
 }
