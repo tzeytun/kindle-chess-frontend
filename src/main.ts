@@ -24,8 +24,7 @@ const resignBtn = document.getElementById('resignBtn') as HTMLButtonElement;
 
 if (resignBtn) {
     resignBtn.onclick = () => {
-        // Eğer oyun zaten bittiyse "Menüye Dön" modundadır
-        if (resignBtn.innerText.includes('Menü')) {
+        if (resignBtn.innerText.includes('Ana Ekrana Dön')) {
             socket.emit('backToMenu');
             location.reload();
             return;
@@ -135,9 +134,8 @@ socket.on('updateBoard', (data: any) => {
         
         updateState({ isMyTurn: false });
 
-        // Butonu "Menüye Dön" yap
         if(resignBtn) {
-            resignBtn.innerText = "Menü 🏠"; // Kısa isim
+            resignBtn.innerText = "Ana Ekrana Dön"; // Kısa isim
             resignBtn.className = "border-2 border-black px-3 py-1 font-bold text-xs bg-white text-black";
             // Onclick olayını değiştiriyoruz
              resignBtn.onclick = () => { 
