@@ -2,14 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Kindle Chess</title>
   </head>
-  <body class="flex flex-col items-center justify-between h-screen bg-white overflow-hidden p-2 select-none">
+  <body class="flex flex-col items-center justify-between h-screen bg-white overflow-hidden p-1 select-none">
     
-    <h1 class="text-xl font-bold mt-1">Kindle Chess</h1>
+    <script>
+        window.onerror = function(m){ alert("Hata:" + m); };
+    </script>
+    
+    <h1 class="text-lg font-bold mt-1">Kindle Chess</h1>
 
-    <div id="lobbyScreen" class="w-full max-w-[400px] flex flex-col gap-3 p-2 flex-grow justify-center">
+    <div id="lobbyScreen" class="w-full max-w-[400px] flex flex-col gap-2 p-2 flex-grow justify-center">
         
         <div class="border-2 border-black p-2 text-center">
             <h2 class="font-bold text-base mb-2">Hızlı Oyun</h2>
@@ -21,7 +25,7 @@
         </div>
         
         <div class="border-2 border-black p-2 text-center">
-            <h2 class="font-bold text-base mb-2">Bot</h2>
+            <h2 class="font-bold text-base mb-2">Bot 🤖</h2>
             <div class="flex gap-1">
                 <button onclick="playVsBot('easy')" class="flex-1 border-2 border-black py-1 text-sm hover:bg-black hover:text-white">Kolay</button>
                 <button onclick="playVsBot('medium')" class="flex-1 border-2 border-black py-1 text-sm hover:bg-black hover:text-white">Orta</button>
@@ -38,41 +42,47 @@
             </div>
         </div>
         
-        <div id="info" class="text-xs text-center">ID: <span id="playerIdDisplay">...</span></div>
+        <div class="text-center mt-2">
+             <button onclick="localStorage.clear(); location.reload();" class="text-xs text-red-600 underline cursor-pointer">
+                Sorun mu var? Kimliği Sıfırla
+             </button>
+        </div>
+
+        <div id="info" class="text-xs text-center mt-1">ID: <span id="playerIdDisplay">...</span></div>
     </div>
 
-    <div id="gameScreen" class="hidden flex-col items-center w-full max-w-[450px] justify-center h-full pb-2">
+    <div id="gameScreen" class="hidden flex-col items-center w-full max-w-[450px] justify-start h-full pt-1">
         
         <div id="opponentTimerArea" class="w-full flex justify-end items-center gap-2 mb-1 px-2">
-            <span id="blackIndicator" class="text-lg invisible"></span>
+            <span id="blackIndicator" class="text-lg invisible">⏳</span>
             <div id="blackTimer" class="border-2 border-black px-2 py-0 font-mono text-xl font-bold bg-white text-black">--:--</div>
         </div>
 
-        <div id="status" class="text-sm mb-1 font-mono border-2 border-black p-1 w-full text-center truncate">Bağlanıyor...</div>
+        <div id="status" class="text-sm mb-1 font-mono border-2 border-black p-1 w-[90vw] text-center truncate">Bağlanıyor...</div>
 
         <div id="board" 
              class="grid grid-cols-8 grid-rows-8 border-4 border-black mx-auto"
-             style="width: 85vw; height: 85vw; max-width: 450px; max-height: 450px;">
+             style="width: 88vw; height: 88vw; max-width: 450px; max-height: 450px;">
         </div>
 
-        <div id="playerTimerArea" class="w-full flex justify-start items-center gap-2 mt-1 px-2">
-            <div id="whiteTimer" class="border-2 border-black px-2 py-0 font-mono text-xl font-bold bg-white text-black">--:--</div>
-            <span id="whiteIndicator" class="text-lg invisible"></span>
-        </div>
-        
-        <div class="mt-2 flex gap-4 w-full justify-center px-2">
-            <button id="refreshBtn" class="flex-1 border-2 border-black py-2 font-bold text-sm active:bg-black active:text-white">
-                Temizle
-            </button>
-            <button id="resignBtn" class="flex-1 border-2 border-black py-2 font-bold text-sm hover:bg-black hover:text-white transition-colors">
-                Çıkış
-            </button>
+        <div id="playerTimerArea" class="w-full flex justify-between items-center mt-2 px-2 gap-1">
+            
+            <div class="flex items-center gap-2">
+                <div id="whiteTimer" class="border-2 border-black px-2 py-0 font-mono text-xl font-bold bg-white text-black">--:--</div>
+                <span id="whiteIndicator" class="text-lg invisible">⏳</span>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="refreshBtn" class="border-2 border-black px-3 py-1 font-bold text-sm active:bg-black active:text-white" title="Ekranı Temizle">
+                    ⚡
+                </button>
+                <button id="resignBtn" class="border-2 border-black px-3 py-1 font-bold text-sm hover:bg-black hover:text-white transition-colors">
+                    Çıkış 🏳️
+                </button>
+            </div>
         </div>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
-    <script>
-        window.onerror = function(m){ alert("Hata:" + m); };
-    </script>
-</body>
+  </body>
 </html>
