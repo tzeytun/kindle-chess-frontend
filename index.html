@@ -5,26 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kindle Chess</title>
   </head>
-  <body class="flex flex-col items-center justify-start h-screen pt-4">
-    
+  <body class="flex flex-col items-center justify-start h-screen pt-4 bg-white">
     <h1 class="text-2xl font-bold mb-2">Kindle Chess</h1>
-    <div id="status" class="text-lg mb-4 font-mono border-2 border-black p-2 w-11/12 text-center">
-      Sunucuya bağlanılıyor...
+
+    <div id="lobbyScreen" class="w-full max-w-[600px] flex flex-col gap-4 p-4">
+        <div class="border-2 border-black p-4 text-center">
+            <h2 class="font-bold text-lg mb-4">Hızlı Oyun</h2>
+            <div class="flex justify-center gap-2">
+                <button onclick="joinQueue('5')" class="border-2 border-black px-4 py-2 hover:bg-black hover:text-white">5 dk</button>
+                <button onclick="joinQueue('10')" class="border-2 border-black px-4 py-2 hover:bg-black hover:text-white">10 dk</button>
+            </div>
+            <p id="lobbyStatus" class="mt-2 text-sm italic">Mod seç...</p>
+        </div>
+        
+        <div class="border-2 border-black p-4 text-center">
+            <h2 class="font-bold text-lg mb-2">Bot ile Oyna 🤖</h2>
+            <div class="flex gap-2">
+                <button onclick="playVsBot('easy')" class="flex-1 border-2 border-black py-2 hover:bg-black hover:text-white">Kolay 👶</button>
+                <button onclick="playVsBot('medium')" class="flex-1 border-2 border-black py-2 hover:bg-black hover:text-white">Orta 🤔</button>
+                <button onclick="playVsBot('hard')" class="flex-1 border-2 border-black py-2 font-bold hover:bg-black hover:text-white">Zor 😈</button>
+            </div>
+        </div>
+
+        <div class="border-2 border-black p-4 text-center">
+            <h2 class="font-bold text-lg mb-2">Arkadaşınla Oyna</h2>
+            <button onclick="createRoom()" class="w-full border-2 border-black mb-2 py-2 font-bold">Oda Kur</button>
+            <div class="flex gap-2">
+                <input id="roomInput" type="text" placeholder="ODA KODU" class="border-2 border-black p-2 w-full uppercase text-center" />
+                <button onclick="joinRoom()" class="border-2 border-black px-4 font-bold">GİR</button>
+            </div>
+
+            <div id="info" class="mt-2 text-sm text-center">ID: <span id="playerIdDisplay">...</span></div>
+        </div>
     </div>
 
-    <div id="board" 
-     class="grid grid-cols-8 grid-rows-8 border-4 border-black mx-auto"
-     style="width: 90vw; height: 90vw; max-width: 600px; max-height: 600px;">
-  </div>
+    <div id="gameScreen" class="hidden flex-col items-center w-full">
+        <div id="opponentTimerArea" class="w-[90vw] max-w-[600px] flex justify-end mb-1 items-center gap-2">
+            <span id="blackIndicator" class="text-xl invisible">⏳</span>
+            <div id="blackTimer" class="border-2 border-black px-4 py-1 font-mono text-2xl font-bold bg-white text-black">--:--</div>
+        </div>
 
-  <div class="mt-4 flex gap-4">
-    <button id="refreshBtn" class="border-2 border-black px-4 py-2 font-bold active:bg-black active:text-white">
-        Ekranı Temizle
-    </button>
-</div>
+        <div id="status" class="text-lg mb-2 font-mono border-2 border-black p-2 w-[90vw] max-w-[600px] text-center">Bağlanıyor...</div>
+        <div id="board" class="grid grid-cols-8 grid-rows-8 border-4 border-black mx-auto" style="width: 90vw; height: 90vw; max-width: 600px; max-height: 600px;"></div>
 
-    <div id="info" class="mt-4 text-sm text-center px-4">
-      Oyuncu ID: <span id="playerId" class="font-bold">...</span>
+        <div id="playerTimerArea" class="w-[90vw] max-w-[600px] flex justify-start mt-1 items-center gap-2">
+            <div id="whiteTimer" class="border-2 border-black px-4 py-1 font-mono text-2xl font-bold bg-white text-black">--:--</div>
+            <span id="whiteIndicator" class="text-xl invisible">⏳</span>
+        </div>
+        
+        <div class="mt-4 flex gap-4">
+            <button id="refreshBtn" class="border-2 border-black px-4 py-2 font-bold active:bg-black active:text-white">Temizle ⚡</button>
+            <button onclick="leaveGame()" class="border-2 border-black px-4 py-2 font-bold hover:bg-red-600 hover:text-white">Çıkış 🏳️</button>
+        </div>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
