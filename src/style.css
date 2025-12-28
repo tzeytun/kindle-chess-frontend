@@ -7,4 +7,12 @@ body {
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     background-color: #ffffff;
+
+    overflow: hidden; /* Kaydırmayı kapat */
+    touch-action: manipulation; /* Zoom yapmayı engelle (Kindle için iyi) */
+}
+
+/* Eğer içerik taşarsa da çubuğu gösterme (Webkit tarayıcılar için) */
+::-webkit-scrollbar {
+    display: none;
 }

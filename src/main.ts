@@ -1,13 +1,59 @@
 import './style.css';
 import { socket } from './socket';
 import { elements } from './dom';
-import { state, updateState } from './state';
+import { state, updateState, getPlayerId } from './state';
 import { renderBoard } from './board';
 import type { SocketData } from './types';
+
+// --- BAŞLANGIÇTA ID YAZDIR (Bilgisayar & Kindle için Garanti Çözüm) ---
+// Sayfa yüklendiğinde ID'yi alıp HTML'e basıyoruz.
+document.addEventListener('DOMContentLoaded', () => {
+    const pid = getPlayerId();
+    if (elements.playerIdDisplay) {
+        elements.playerIdDisplay.innerText = pid;
+    }
+});
 
 let timerInterval: any = null;
 let whiteTimeRemaining = 0;
 let blackTimeRemaining = 0;
+
+let resignConfirmStage = false;
+let resignTimeout: any = null;
+const resignBtn = document.getElementById('resignBtn') as HTMLButtonElement;
+
+if (resignBtn) {
+    resignBtn.onclick = () => {
+        // Eğer oyun zaten bittiyse "Menüye Dön" modundadır
+        if (resignBtn.innerText.includes('Menü')) {
+            socket.emit('backToMenu');
+            location.reload();
+            return;
+        }
+
+        // Oyun devam ediyorsa:
+        if (!resignConfirmStage) {
+            // 1. TIKLAMA: Onay İste
+            resignConfirmStage = true;
+            resignBtn.innerText = "Emin misin? (Bas)";
+            resignBtn.className = "flex-1 border-2 border-black py-2 font-bold text-sm bg-black text-white"; // Dikkat çeksin diye siyah yap
+            
+            // 3 saniye içinde basmazsa iptal et
+            resignTimeout = setTimeout(() => {
+                resignConfirmStage = false;
+                resignBtn.innerText = "Çıkış 🏳️";
+                resignBtn.className = "flex-1 border-2 border-black py-2 font-bold text-sm hover:bg-black hover:text-white transition-colors";
+            }, 3000);
+
+        } else {
+            // 2. TIKLAMA: Pes Et
+            clearTimeout(resignTimeout);
+            socket.emit('resign');
+            resignBtn.innerText = "Pes Ediliyor...";
+            resignConfirmStage = false;
+        }
+    };
+}
 
 // --- BOT FONKSİYONU ---
 (window as any).playVsBot = (difficulty: string) => {
@@ -74,9 +120,9 @@ socket.on('updateBoard', (data: any) => {
         let subText = "";
 
         if (imWinner) {
-            mainText = "🏆 KAZANDINIZ! 🏆";
+            mainText = "KAZANDINIZ!";
         } else {
-            mainText = "😔 KAYBETTİNİZ...";
+            mainText = "KAYBETTİNİZ...";
         }
 
         if (data.reason === 'resign') subText = imWinner ? "(Rakip terk etti)" : "(Terk ettiniz)";
@@ -90,14 +136,10 @@ socket.on('updateBoard', (data: any) => {
         updateState({ isMyTurn: false });
 
         
-        const exitBtn = document.querySelector('button[onclick="leaveGame()"]') as HTMLButtonElement;
-        if(exitBtn) {
-            exitBtn.innerText = "Menüye Dön 🏠";
-            
-            exitBtn.onclick = () => { 
-                socket.emit('backToMenu'); 
-                
-            };
+        if(resignBtn) {
+            resignBtn.innerText = "Menüye Dön";
+            resignBtn.className = "flex-1 border-2 border-black py-2 font-bold text-sm bg-white text-black";
+            // onclick mantığı yukarıda tanımlı (innerText kontrolü ile)
         }
         
     } else {
@@ -204,12 +246,6 @@ function formatTime(seconds: number): string {
     socket.emit('joinRoom', { roomId: code });
 };
 
-(window as any).leaveGame = () => {
-    if (confirm("Oyunu terk edip kaybetmeyi kabul ediyor musun?")) {
-        socket.emit('resign');
-        
-    }
-};
 
 if (elements.refreshBtn) {
     elements.refreshBtn.onclick = () => {

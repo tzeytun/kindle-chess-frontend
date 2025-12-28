@@ -1,36 +1,28 @@
-import { elements } from './dom';
 import type { GameState } from './types';
 
+// BASİT ID ÜRETİCİ
 function generateSimpleId() {
     return 'player-' + Math.random().toString(36).substring(2, 9);
 }
 
-// 1. ID Yönetimi (Hata korumalı)
+// 1. ID Yönetimi
 let myPlayerId = '';
 
 try {
     myPlayerId = localStorage.getItem('kindle_chess_player_id') || '';
-} catch (e) {
-    console.error("LocalStorage hatası:", e);
-}
+} catch (e) { console.error(e); }
 
 if (!myPlayerId) {
     myPlayerId = generateSimpleId();
     try {
         localStorage.setItem('kindle_chess_player_id', myPlayerId);
-    } catch (e) {
-        // Kindle'da gizli moddaysa veya izin yoksa kaydetmeyebilir, sorun yok.
-    }
+    } catch (e) {}
 }
 
-// HTML'e yazdırma (Null check ekledik)
-if (elements.playerIdDisplay) {
-    elements.playerIdDisplay.innerText = myPlayerId;
-}
+// Dışarıya sadece ID'yi veriyoruz, ekrana yazdırma işini main.ts yapacak
+export const getPlayerId = () => myPlayerId;
 
-export const getPlayerId = () => myPlayerId as string;
-
-// 2. Oyun State'i (Başlangıç Değerleri)
+// 2. Oyun State'i
 export const state: GameState = {
   gameId: null,
   color: null,
@@ -40,7 +32,6 @@ export const state: GameState = {
   lastMove: null
 };
 
-// State güncelleme yardımcısı
 export function updateState(updates: Partial<GameState>) {
   Object.assign(state, updates);
 }
