@@ -1,91 +1,209 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Kindle Chess</title>
-  </head>
-  <body class="fixed inset-0 flex flex-col items-center bg-white overflow-hidden p-1 select-none font-sans">
-    
-    <script>
-        window.onerror = function(m){ alert("Hata:" + m); };
-    </script>
-    
-    <div id="lobbyScreen" class="w-full max-w-[400px] flex flex-col gap-2 p-2 h-full justify-center overflow-y-auto">
-        <h1 class="text-lg font-bold text-center mb-2">Kindle Chess</h1>
-        
-        <div class="border-2 border-black p-2 text-center">
-            <h2 class="font-bold text-sm mb-1">Hızlı Oyun</h2>
-            <div class="flex justify-center gap-2">
-                <button onclick="joinQueue('5')" class="border-2 border-black px-4 py-2 text-sm hover:bg-black hover:text-white">5 dk</button>
-                <button onclick="joinQueue('10')" class="border-2 border-black px-4 py-2 text-sm hover:bg-black hover:text-white">10 dk</button>
-            </div>
-            <p id="lobbyStatus" class="mt-1 text-xs italic">Mod seç...</p>
-        </div>
-        
-        <div class="border-2 border-black p-2 text-center">
-            <h2 class="font-bold text-sm mb-1">Bot 🤖</h2>
-            <div class="flex gap-1">
-                <button onclick="playVsBot('easy')" class="flex-1 border-2 border-black py-2 text-xs hover:bg-black hover:text-white">Kolay</button>
-                <button onclick="playVsBot('medium')" class="flex-1 border-2 border-black py-2 text-xs hover:bg-black hover:text-white">Orta</button>
-                <button onclick="playVsBot('hard')" class="flex-1 border-2 border-black py-2 text-xs font-bold hover:bg-black hover:text-white">Zor</button>
-            </div>
-        </div>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kindle Chess</title>
 
-        <div class="border-2 border-black p-2 text-center">
-            <h2 class="font-bold text-sm mb-1">Arkadaş</h2>
-            <button onclick="createRoom()" class="w-full border-2 border-black mb-1 py-1 text-xs font-bold">Oda Kur</button>
-            <div class="flex gap-1">
-                <input id="roomInput" type="text" placeholder="KOD" class="border-2 border-black p-1 w-full uppercase text-center text-xs" />
-                <button onclick="joinRoom()" class="border-2 border-black px-3 font-bold text-xs">GİR</button>
-            </div>
-        </div>
-        
-        <div class="text-center mt-2">
-             <button onclick="localStorage.clear(); location.reload();" class="text-xs text-red-600 underline cursor-pointer">
-                Kimliği Sıfırla
-             </button>
-        </div>
-        <div id="info" class="text-xs text-center">ID: <span id="playerIdDisplay">...</span></div>
+  <style>
+    /* ===== KİNDLE SAFE RESET ===== */
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      font-family: sans-serif;
+    }
+
+    /* ===== GERÇEK MERKEZLEME ===== */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* ===== ANA KONTEYNER ===== */
+    #appRoot {
+      width: 100%;
+      max-width: 420px;          /* Kindle için ideal */
+      min-height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+    }
+
+    /* ===== LOBBY & GAME GENEL ===== */
+    .screen {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ===== LOBBY ===== */
+    #lobbyScreen {
+      gap: 10px;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 4px 0;
+    }
+
+    h2 {
+      font-size: 13px;
+      margin: 0 0 4px 0;
+    }
+
+    button, input {
+      font-size: 12px;
+      background: #fff;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* ===== OYUN EKRANI ===== */
+    #gameScreen {
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    /* ===== SATRANÇ TAHTASI ===== */
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      border: 2px solid #000;
+
+      /* Kindle uyumlu ölçek */
+      width: min(90vw, 320px);
+      height: min(90vw, 320px);
+    }
+
+    /* ===== TIMER BAR ===== */
+    .topBar, .bottomBar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 6px;
+      border-color: #999;
+    }
+
+    .topBar {
+      border-bottom: 1px solid #999;
+    }
+
+    .bottomBar {
+      border-top: 1px solid #999;
+    }
+
+    .timer {
+      border: 2px solid #000;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 16px;
+      background: #fff;
+    }
+
+    .indicator {
+      font-size: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="appRoot">
+
+  <!-- ===== LOBBY ===== -->
+  <div id="lobbyScreen" class="screen">
+
+    <h1>Kindle Chess</h1>
+
+    <div style="border:2px solid #000; padding:8px; width:100%; text-align:center;">
+      <h2>Hızlı Oyun</h2>
+      <div style="display:flex; justify-content:center; gap:6px;">
+        <button onclick="joinQueue('5')" style="border:2px solid #000; padding:6px 14px;">5 dk</button>
+        <button onclick="joinQueue('10')" style="border:2px solid #000; padding:6px 14px;">10 dk</button>
+      </div>
+      <div id="lobbyStatus" style="font-size:11px; margin-top:4px;">Mod seç...</div>
     </div>
 
-    <div id="gameScreen" class="hidden flex-col items-center w-full h-full justify-between pb-1">
-        
-        <div class="w-full flex justify-between items-center px-2 mt-1 border-b border-gray-300 pb-1">
-            <div id="status" class="text-xs font-mono font-bold truncate max-w-[50%]">Bağlanıyor...</div>
-            
-            <div id="opponentTimerArea" class="flex items-center gap-1">
-                <span id="blackIndicator" class="text-sm invisible">⏳</span>
-                <div id="blackTimer" class="border border-black px-2 py-0 font-mono text-lg font-bold bg-white text-black">--:--</div>
-            </div>
-        </div>
-
-        <div class="flex-grow flex items-center justify-center w-full p-1">
-            <div id="board" 
-                 class="grid grid-cols-8 grid-rows-8 border-2 border-black"
-                 style="aspect-ratio: 1/1; height: auto; width: auto; max-width: 95vw; max-height: 60vh;">
-                 </div>
-        </div>
-
-        <div class="w-full flex items-center justify-between px-2 mb-1 border-t border-gray-300 pt-1">
-            
-            <div id="playerTimerArea" class="flex items-center gap-1">
-                <div id="whiteTimer" class="border-2 border-black px-2 py-0 font-mono text-xl font-bold bg-white text-black">--:--</div>
-                <span id="whiteIndicator" class="text-sm invisible">⏳</span>
-            </div>
-
-            <div class="flex gap-2">
-                <button id="refreshBtn" class="border border-black px-3 py-1 font-bold text-xs active:bg-black active:text-white" title="Yenile">
-                    ⚡
-                </button>
-                <button id="resignBtn" class="border-2 border-black px-3 py-1 font-bold text-xs hover:bg-black hover:text-white transition-colors">
-                    Çıkış 🏳️
-                </button>
-            </div>
-        </div>
-
+    <div style="border:2px solid #000; padding:8px; width:100%; text-align:center;">
+      <h2>Bot 🤖</h2>
+      <div style="display:flex; gap:4px;">
+        <button onclick="playVsBot('easy')" style="flex:1; border:2px solid #000;">Kolay</button>
+        <button onclick="playVsBot('medium')" style="flex:1; border:2px solid #000;">Orta</button>
+        <button onclick="playVsBot('hard')" style="flex:1; border:2px solid #000; font-weight:bold;">Zor</button>
+      </div>
     </div>
 
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <div style="border:2px solid #000; padding:8px; width:100%; text-align:center;">
+      <h2>Arkadaş</h2>
+      <button onclick="createRoom()" style="width:100%; border:2px solid #000; margin-bottom:4px;">Oda Kur</button>
+      <div style="display:flex; gap:4px;">
+        <input id="roomInput" placeholder="KOD"
+               style="flex:1; border:2px solid #000; text-align:center;" />
+        <button onclick="joinRoom()" style="border:2px solid #000;">GİR</button>
+      </div>
+    </div>
+
+    <button onclick="localStorage.clear(); location.reload();"
+            style="font-size:11px; color:#b00000; background:none; border:none; text-decoration:underline;">
+      Kimliği Sıfırla
+    </button>
+
+    <div style="font-size:11px;">ID: <span id="playerIdDisplay">...</span></div>
+  </div>
+
+  <!-- ===== GAME ===== -->
+  <div id="gameScreen" class="screen hidden">
+
+    <div class="topBar">
+      <div id="status" style="font-size:11px; font-weight:bold;">Bağlanıyor...</div>
+      <div style="display:flex; gap:4px; align-items:center;">
+        <span id="blackIndicator" class="indicator hidden">⏳</span>
+        <div id="blackTimer" class="timer">--:--</div>
+      </div>
+    </div>
+
+    <div style="flex-grow:1; display:flex; align-items:center; justify-content:center;">
+      <div id="board"></div>
+    </div>
+
+    <div class="bottomBar">
+      <div style="display:flex; gap:4px; align-items:center;">
+        <div id="whiteTimer" class="timer">--:--</div>
+        <span id="whiteIndicator" class="indicator hidden">⏳</span>
+      </div>
+
+      <div style="display:flex; gap:6px;">
+        <button id="refreshBtn" style="border:2px solid #000;">⚡</button>
+        <button id="resignBtn" style="border:2px solid #000;">Çıkış 🏳️</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
 </html>
