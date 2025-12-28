@@ -147,7 +147,7 @@
     </div>
 
     <div style="border:2px solid #000; padding:8px; width:100%; text-align:center;">
-      <h2>Bot 🤖</h2>
+      <h2>Bot</h2>
       <div style="display:flex; gap:4px;">
         <button onclick="playVsBot('easy')" style="flex:1; border:2px solid #000;">Kolay</button>
         <button onclick="playVsBot('medium')" style="flex:1; border:2px solid #000;">Orta</button>
@@ -194,11 +194,26 @@
         <span id="whiteIndicator" class="indicator hidden">⏳</span>
       </div>
 
-      <div style="display:flex; gap:6px;">
-        <button id="refreshBtn" style="border:2px solid #000;">⚡</button>
-        <button id="resignBtn" style="border:2px solid #000;">Çıkış 🏳️</button>
-      </div>
+      <div class="kindle-actions">
+
+    <div class="kindle-flash-group">
+        <button id="refreshBtn"
+                class="border border-black px-3 py-1 font-bold text-xs"
+                title="Ekranı temizle">
+            ⚡
+        </button>
+        <span class="kindle-flash-label">
+            Ekranı Temizle
+        </span>
     </div>
+
+    <button id="resignBtn"
+            class="border-2 border-black px-3 py-1 font-bold text-xs kindle-exit-btn">
+        Çıkış 🏳️
+    </button>
+
+</div>
+
 
   </div>
 

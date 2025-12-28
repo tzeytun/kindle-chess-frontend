@@ -15,4 +15,36 @@ body {
 /* Eğer içerik taşarsa da çubuğu gösterme (Webkit tarayıcılar için) */
 ::-webkit-scrollbar {
     display: none;
+
+    /* =====================================================
+   K I N D L E  -  A K S İ Y O N  B U T O N L A R I
+   ===================================================== */
+
+.kindle-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px; /* Kindle’da yapışmayı engeller */
+}
+
+/* Şimşek grubu */
+.kindle-flash-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Şimşek açıklama yazısı */
+.kindle-flash-label {
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+    opacity: 0.85;
+    white-space: nowrap;
+}
+
+/* Çıkış butonu biraz nefes alsın */
+.kindle-exit-btn {
+    margin-left: 6px;
+}
+
 }
